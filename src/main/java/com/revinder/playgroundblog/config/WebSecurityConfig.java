@@ -44,8 +44,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .successHandler(loginSuccessHandler)
                     .failureHandler(new SimpleUrlAuthenticationFailureHandler());
 
-        http.csrf().ignoringAntMatchers("/api/login")
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+        // POST + PUT Wont work with csrf enabled from postman alone.
+        http.csrf().disable();
+//        http.csrf().ignoringAntMatchers("/api/login")
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 
 
@@ -57,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
         String encodedPwd = passwordEncoder().encode(pwd);
 
-        manager.createUser(User.withUsername(username).password(pwd).roles("USER").build());
+        manager.createUser(User.withUsername(username).password(encodedPwd).roles("USER").build());
         return manager;
     }
 

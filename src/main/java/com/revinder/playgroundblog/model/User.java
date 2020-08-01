@@ -1,8 +1,8 @@
 package com.revinder.playgroundblog.model;
 
-import com.mongodb.lang.NonNull;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -12,12 +12,11 @@ public class User {
     @Id
     private String id;
 
-    @NonNull
+    @Indexed(unique = true)
     private String login;
 
-    @NonNull
     private String password;
 
-    @NonNull
+    @Indexed(unique = true)
     private String email;
 }
