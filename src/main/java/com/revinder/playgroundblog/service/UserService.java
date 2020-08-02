@@ -6,8 +6,6 @@ import com.revinder.playgroundblog.util.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class UserService {
 
@@ -20,13 +18,13 @@ public class UserService {
     }
 
 
-    public List<User> findAll()
+    public Iterable<User> findAll()
     {
         return userRepository.findAll();
     }
 
 
-    public User findById(String id)
+    public User findById(Integer id)
     {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
@@ -42,7 +40,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteById(String id)
+    public void deleteById(Integer id)
     {
         userRepository.deleteById(id);
     }

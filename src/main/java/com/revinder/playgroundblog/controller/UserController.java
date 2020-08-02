@@ -5,7 +5,6 @@ import com.revinder.playgroundblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -19,39 +18,39 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> findAll()
+    public @ResponseBody Iterable<User> findAll()
     {
         return userService.findAll();
     }
 
     @PostMapping
-    public User create(@RequestBody User user)
+    public @ResponseBody User create(@RequestBody User user)
     {
         return userService.save(user);
     }
 
     @PutMapping("/{id}")
-    public User updateById(@RequestBody User user)
+    public @ResponseBody User updateById(@RequestBody User user)
     {
         return userService.save(user);
     }
 
 
     @GetMapping("/{id}")
-    public User findById(@PathVariable String id)
+    public @ResponseBody User findById(@PathVariable Integer id)
     {
         return userService.findById(id);
     }
 
     @GetMapping("/name/{login}")
-    public User findByLogin(@PathVariable String login)
+    public @ResponseBody User findByLogin(@PathVariable String login)
     {
         return userService.findByLogin(login);
     }
 
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable String id)
+    public void deleteById(@PathVariable Integer id)
     {
         userService.deleteById(id);
     }
