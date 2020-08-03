@@ -3,6 +3,8 @@ package com.revinder.playgroundblog.controller;
 import com.revinder.playgroundblog.model.User;
 import com.revinder.playgroundblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -18,40 +20,47 @@ public class UserController {
     }
 
     @GetMapping
-    public @ResponseBody Iterable<User> findAll()
+    public @ResponseBody
+    ResponseEntity<Iterable<User>> findAll()
     {
-        return userService.findAll();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.findAll());
     }
 
     @PostMapping
-    public @ResponseBody User create(@RequestBody User user)
+    public @ResponseBody ResponseEntity<User> create(@RequestBody User user)
     {
-        return userService.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.save(user));
     }
 
     @PutMapping("/{id}")
-    public @ResponseBody User updateById(@RequestBody User user)
+    public @ResponseBody ResponseEntity<User> updateById(@RequestBody User user)
     {
-        return userService.save(user);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.save(user));
     }
 
 
     @GetMapping("/{id}")
-    public @ResponseBody User findById(@PathVariable Integer id)
+    public @ResponseBody ResponseEntity<User> findById(@PathVariable Integer id)
     {
-        return userService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.findById(id));
     }
 
     @GetMapping("/name/{login}")
-    public @ResponseBody User findByLogin(@PathVariable String login)
+    public @ResponseBody ResponseEntity<User> findByLogin(@PathVariable String login)
     {
-        return userService.findByLogin(login);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.findByLogin(login));
     }
 
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Integer id)
+    public ResponseEntity<Void> deleteById(@PathVariable Integer id)
     {
         userService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
