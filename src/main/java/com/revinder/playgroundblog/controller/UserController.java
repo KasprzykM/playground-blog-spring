@@ -43,7 +43,7 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public @ResponseBody ResponseEntity<User> findById(@PathVariable Integer id)
+    public @ResponseBody ResponseEntity<User> findById(@PathVariable Long id)
     {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userService.findById(id));
@@ -58,7 +58,7 @@ public class UserController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Integer id)
+    public ResponseEntity<Void> deleteById(@PathVariable Long id)
     {
         userService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

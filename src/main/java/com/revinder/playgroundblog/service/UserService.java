@@ -24,10 +24,10 @@ public class UserService {
     }
 
 
-    public User findById(Integer id)
+    public User findById(Long id)
     {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+                .orElseThrow(() -> new UserNotFoundException(id.toString()));
     }
 
     public User findByLogin(String login)
@@ -40,7 +40,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteById(Integer id)
+    public void deleteById(Long id)
     {
         userRepository.deleteById(id);
     }

@@ -3,7 +3,7 @@ package com.revinder.playgroundblog.util;
 public class UserNotFoundException extends ResourceNotFoundException{
 
 
-    public UserNotFoundException(Integer id) {
+    public UserNotFoundException(String id) {
         super("Unable to find user with id of " + id);
     }
 }
