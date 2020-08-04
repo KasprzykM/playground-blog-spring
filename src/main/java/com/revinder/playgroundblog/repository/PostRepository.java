@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface PostRepository extends CrudRepository<Post, Long> {
 
-    Post findByUser_Login(String login);
+    Iterable<Post> findAllByUser_Login(String login);
 }

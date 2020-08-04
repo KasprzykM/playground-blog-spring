@@ -28,9 +28,9 @@ public class PostService {
                 .orElseThrow(() -> new PostNotFoundException(id.toString()));
     }
 
-    public Post findByUserLogin(String login)
+    public Iterable<Post> findByUserLogin(String login)
     {
-        return postRepository.findByUser_Login(login);
+        return postRepository.findAllByUser_Login(login);
     }
 
     public Post save(Post post)
