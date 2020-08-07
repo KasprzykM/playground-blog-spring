@@ -1,5 +1,6 @@
 package com.revinder.playgroundblog.util;
 
+
 public class PostNotFoundException extends ResourceNotFoundException{
 
     public PostNotFoundException(String id) {

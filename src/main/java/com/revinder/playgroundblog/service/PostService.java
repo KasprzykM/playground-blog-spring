@@ -30,7 +30,8 @@ public class PostService {
 
     public Iterable<Post> findByUserLogin(String login)
     {
-        return postRepository.findAllByUser_Login(login);
+        return postRepository.findAllByUser_Login(login)
+                .orElseThrow(() -> new PostNotFoundException(" user with login " + login + " has not written any posts"));
     }
 
     public Post save(Post post)

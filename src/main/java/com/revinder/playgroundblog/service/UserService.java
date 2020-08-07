@@ -32,7 +32,8 @@ public class UserService {
 
     public User findByLogin(String login)
     {
-        return userRepository.findByLogin(login);
+        return userRepository.findByLogin(login)
+                .orElseThrow(() -> new UserNotFoundException(login));
     }
 
     public User save(User user)

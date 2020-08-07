@@ -3,7 +3,9 @@ package com.revinder.playgroundblog.repository;
 import com.revinder.playgroundblog.model.User;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+
 public interface UserRepository extends CrudRepository<User, Long> {
 
-    User findByLogin(String name);
+    Optional<User> findByLogin(String name);
 }
