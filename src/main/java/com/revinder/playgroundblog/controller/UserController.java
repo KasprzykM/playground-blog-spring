@@ -49,11 +49,11 @@ public class UserController {
                 .body(userService.findById(id));
     }
 
-    @GetMapping("/name/{login}")
-    public @ResponseBody ResponseEntity<User> findByLogin(@PathVariable String login)
+    @GetMapping("/name/{userLogin}")
+    public @ResponseBody ResponseEntity<User> findByLogin(@PathVariable String userLogin)
     {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(userService.findByLogin(login));
+                .body(userService.findByLogin(userLogin));
     }
 
 

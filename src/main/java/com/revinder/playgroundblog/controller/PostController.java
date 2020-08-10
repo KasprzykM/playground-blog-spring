@@ -4,11 +4,12 @@ import com.revinder.playgroundblog.model.Post;
 import com.revinder.playgroundblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/post")
+@RequestMapping(value = "/api/post")
 public class PostController {
 
     private final PostService postService;
@@ -27,18 +28,18 @@ public class PostController {
                 .body(postService.findAll());
     }
 
-    @PostMapping
-    public @ResponseBody ResponseEntity<Post> create(@RequestBody Post post)
+    @PostMapping("/{userLogin}")
+    public @ResponseBody ResponseEntity<Post> create(@RequestBody Post post, @PathVariable String userLogin)
     {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(postService.save(post));
+                .body(postService.save(post, userLogin));
     }
 
-    @PutMapping("/{id}")
-    public @ResponseBody ResponseEntity<Post> updateById(@RequestBody Post post)
+    @PutMapping("/{userLogin}/{id}")
+    public @ResponseBody ResponseEntity<Post> updateById(@RequestBody Post post, @PathVariable String userLogin)
     {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(postService.save(post));
+                .body(postService.save(post, userLogin));
     }
 
     @DeleteMapping("/{id}")
@@ -55,7 +56,7 @@ public class PostController {
                 .body(postService.findById(id));
     }
 
-    @GetMapping("/byUser/{login}")
+    @GetMapping("/user/{login}")
     public @ResponseBody ResponseEntity<Iterable<Post>> findByLogin(@PathVariable String login)
     {
         return ResponseEntity.status(HttpStatus.OK)

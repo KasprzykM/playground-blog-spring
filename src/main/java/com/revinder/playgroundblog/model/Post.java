@@ -21,6 +21,7 @@ public class Post {
 
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @JoinColumn(nullable = false)
     private User user;
 
     @Column(nullable = false)
