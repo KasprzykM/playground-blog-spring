@@ -3,13 +3,21 @@ package com.revinder.playgroundblog.controller;
 import com.revinder.playgroundblog.model.Post;
 import com.revinder.playgroundblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
-@RequestMapping(value = "/api/post")
+@RequestMapping(value = "/api/posts")
 public class PostController {
 
     private final PostService postService;
@@ -21,11 +29,18 @@ public class PostController {
     }
 
     @GetMapping
-    public @ResponseBody
-    ResponseEntity<Iterable<Post>> findAll()
+    public
+    ResponseEntity<CollectionModel<EntityModel<Post>>> findAll()
     {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(postService.findAll());
+        List<EntityModel<Post>> posts = postService.findAll().stream()
+                .map(post -> EntityModel.of(post,
+                        linkTo(methodOn(PostController.class).findById(post.getId())).withSelfRel(),
+                        linkTo(methodOn(PostController.class).findAll()).withRel("posts")
+                )).collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                CollectionModel.of(posts,
+                        linkTo(methodOn(PostController.class).findAll()).withSelfRel()));
     }
 
     @PostMapping("/{userLogin}")
