@@ -25,4 +25,12 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+
+    public void replaceFrom(User user)
+    {
+        this.login    = user.login       != null ? user.login    : this.login;
+        this.password = user.password    != null ? user.password : this.password;
+        this.email    = user.email       != null ? user.email    : this.email;
+    }
+
 }
