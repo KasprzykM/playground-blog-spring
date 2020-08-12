@@ -2,11 +2,14 @@ package com.revinder.playgroundblog.controller;
 
 import com.revinder.playgroundblog.model.User;
 import com.revinder.playgroundblog.service.UserService;
+import com.revinder.playgroundblog.util.UserDuplicateEntryException;
 import com.revinder.playgroundblog.util.modelassemblers.UserModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +47,15 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody User user) {
-        EntityModel<User> userResource = userModelAssembler.toModel(userService.save(user));
+        User newUser;
+        try {
+            newUser = userService.save(user);
+        }catch(DataIntegrityViolationException e)
+        {
+            throw new UserDuplicateEntryException();
+        }
+        EntityModel<User> userResource = userModelAssembler.toModel(newUser);
+
         return ResponseEntity
                 .created(userResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(userResource);
