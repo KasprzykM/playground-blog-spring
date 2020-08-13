@@ -5,4 +5,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.CONFLICT, reason = "There is already user registered with that login or email.")
 public class UserDuplicateEntryException extends RuntimeException{
+
+    public UserDuplicateEntryException(String msg)
+    {
+        super("Duplicate user found in db: " + msg);
+    }
 }

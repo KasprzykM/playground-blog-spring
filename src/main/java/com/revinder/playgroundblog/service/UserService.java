@@ -2,10 +2,15 @@ package com.revinder.playgroundblog.service;
 
 import com.revinder.playgroundblog.model.User;
 import com.revinder.playgroundblog.repository.UserRepository;
+import com.revinder.playgroundblog.util.IncorrectBodyException;
+import com.revinder.playgroundblog.util.UserDuplicateEntryException;
 import com.revinder.playgroundblog.util.UserNotFoundException;
+import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Service
@@ -20,31 +25,32 @@ public class UserService {
     }
 
 
-    public List<User> findAll()
-    {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
 
-    public User findById(Long id)
-    {
+    public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id.toString()));
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public User findByLogin(String login)
-    {
+    public User findByLogin(String login) {
         return userRepository.findByLogin(login)
                 .orElseThrow(() -> new UserNotFoundException(login));
     }
 
-    public User save(User user)
-    {
-        return userRepository.save(user);
+    public User save(User user) {
+        if(user.getEmail() == null || user.getLogin() == null || user.getPassword() == null)
+            throw new IncorrectBodyException(user.toString());
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new UserDuplicateEntryException(e.getLocalizedMessage());
+        }
     }
 
-    public void deleteById(Long id)
-    {
+    public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
 }
