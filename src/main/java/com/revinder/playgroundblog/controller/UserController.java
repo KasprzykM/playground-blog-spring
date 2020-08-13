@@ -2,12 +2,8 @@ package com.revinder.playgroundblog.controller;
 
 import com.revinder.playgroundblog.model.User;
 import com.revinder.playgroundblog.service.UserService;
-import com.revinder.playgroundblog.util.IncorrectBodyException;
-import com.revinder.playgroundblog.util.UserDuplicateEntryException;
 import com.revinder.playgroundblog.util.modelassemblers.UserModelAssembler;
-import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
