@@ -39,6 +39,7 @@ public class UserService {
     }
 
     public User save(User user) {
+        user.setRole(User.Role.USER);
         User savedUser;
         if(user.getEmail() == null || user.getLogin() == null || user.getPassword() == null)
             throw new IncorrectBodyException(user.toString());
@@ -51,8 +52,17 @@ public class UserService {
     }
 
     public void deleteById(Long id) {
-        userRepository.findById(id)
+        User userToDelete = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        userRepository.deleteById(id);
+        userRepository.delete(userToDelete);
+    }
+
+
+    public User update(User user, Long userIdToUpdate)
+    {
+        User userToUpdate = userRepository.findById(userIdToUpdate)
+                .orElseThrow(() -> new UserNotFoundException(userIdToUpdate));
+        userToUpdate.updateFrom(user);
+        return userRepository.save(userToUpdate);
     }
 }

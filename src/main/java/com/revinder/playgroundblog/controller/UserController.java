@@ -43,9 +43,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody User user) {
+    public ResponseEntity<EntityModel<User>> create(@RequestBody User user) {
         /* TODO: Remake as registration. */
-        user.setRole(User.Role.USER);
         User newUser = userService.save(user);
         EntityModel<User> userResource = userModelAssembler.toModel(newUser);
         return ResponseEntity
@@ -54,11 +53,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateById(@RequestBody User user, @PathVariable Long id) {
-        User userToUpdate = userService.findById(id);
-        userToUpdate.updateFrom(user);
-        userService.save(userToUpdate);
-        EntityModel<User> userResource = userModelAssembler.toModel(userToUpdate);
+    public ResponseEntity<EntityModel<User>> updateById(@RequestBody User user,
+                                                        @PathVariable Long id) {
+        User updatedUser = userService.update(user, id);
+        EntityModel<User> userResource = userModelAssembler.toModel(updatedUser);
         return ResponseEntity
                 .created(userResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(userResource);
@@ -77,7 +75,7 @@ public class UserController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
