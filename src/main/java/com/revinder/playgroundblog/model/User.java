@@ -25,12 +25,25 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 5)
+    private Role role;
 
-    public void replaceFrom(User user)
+    public void updateFrom(User user)
     {
         this.login    = user.login       != null ? user.login    : this.login;
         this.password = user.password    != null ? user.password : this.password;
         this.email    = user.email       != null ? user.email    : this.email;
+    }
+
+
+    public enum Role {
+
+        USER("USER"),
+        ADMIN("ADMIN");
+
+        Role(String role) {
+        }
     }
 
 }

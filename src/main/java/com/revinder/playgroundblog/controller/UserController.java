@@ -44,6 +44,8 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody User user) {
+        /* TODO: Remake as registration. */
+        user.setRole(User.Role.USER);
         User newUser = userService.save(user);
         EntityModel<User> userResource = userModelAssembler.toModel(newUser);
         return ResponseEntity
@@ -53,9 +55,10 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateById(@RequestBody User user, @PathVariable Long id) {
-        User updatedUser = userService.findById(id);
-        updatedUser.replaceFrom(user);
-        EntityModel<User> userResource = userModelAssembler.toModel(updatedUser);
+        User userToUpdate = userService.findById(id);
+        userToUpdate.updateFrom(user);
+        userService.save(userToUpdate);
+        EntityModel<User> userResource = userModelAssembler.toModel(userToUpdate);
         return ResponseEntity
                 .created(userResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(userResource);
