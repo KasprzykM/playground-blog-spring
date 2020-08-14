@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface PostRepository extends CrudRepository<Post, Long> {
 
-    Optional<Iterable<Post>> findAllByUser_Login(String login);
+    Optional<List<Post>> findAllByUser_Login(String login);
     List<Post> findAll();
 }
