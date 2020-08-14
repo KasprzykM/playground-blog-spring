@@ -46,5 +46,19 @@ public class Post {
     private Date createdAt = new Date();
 
     @Column(nullable = false)
+    private Date lastUpdatedAt = new Date();
+
+    @Column(nullable = false)
     private boolean draft = true;
+
+
+    public void updateFrom(Post post)
+    {
+        this.draft           = post.draft;
+        this.renderedSummary = post.renderedSummary != null ? post.renderedSummary : this.renderedSummary;
+        this.renderedContent = post.renderedContent != null ? post.renderedContent : this.renderedContent;
+        this.rawContent      = post.title           != null ? post.title           : this.title;
+
+        this.lastUpdatedAt = new Date();
+    }
 }

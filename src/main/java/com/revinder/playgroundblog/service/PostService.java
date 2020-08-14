@@ -5,12 +5,13 @@ import com.revinder.playgroundblog.model.User;
 import com.revinder.playgroundblog.repository.PostRepository;
 import com.revinder.playgroundblog.repository.UserRepository;
 import com.revinder.playgroundblog.util.PostNotFoundException;
+import com.revinder.playgroundblog.util.UserMismatchException;
 import com.revinder.playgroundblog.util.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
 public class PostService {
@@ -44,15 +45,32 @@ public class PostService {
 
     public Post save(Post post, String userLogin)
     {
-        Optional<User> user = userRepository.findByLogin(userLogin);
-        post.setUser(user.
-                orElseThrow(() -> new UserNotFoundException(userLogin)));
+        User user = userRepository.findByLogin(userLogin)
+                .orElseThrow(() -> new UserNotFoundException(userLogin));
+        post.setUser(user);
         return postRepository.save(post);
+    }
+
+    public Post updatePost(Post newPost, Long postIdToUpdate, String userLogin)
+    {
+        User user = userRepository.findByLogin(userLogin)
+                .orElseThrow(() -> new UserNotFoundException(userLogin));
+        Post postToUpdate = postRepository.findById(postIdToUpdate)
+                .orElseThrow(() -> new PostNotFoundException(postIdToUpdate));
+
+        Long actualAuthorId = postToUpdate.getUser().getId();
+        if(!Objects.equals(actualAuthorId, user.getId()))
+            throw new UserMismatchException();
+
+        postToUpdate.updateFrom(newPost);
+        return postRepository.save(postToUpdate);
     }
 
     public void deleteById(Long id)
     {
-        postRepository.deleteById(id);
+        Post postToDelete = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
+        postRepository.delete(postToDelete);
     }
 
 }
