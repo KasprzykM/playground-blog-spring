@@ -1,5 +1,4 @@
 ### TODO:
-* duplicates
 * security
 * docker
 * db passwords (configuration .env)
@@ -7,3 +6,5 @@
 * Tests 
     - all routes
     - scenarios etc.
+    
+* Add comments
