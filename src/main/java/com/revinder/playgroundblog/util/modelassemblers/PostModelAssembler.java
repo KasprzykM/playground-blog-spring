@@ -1,5 +1,6 @@
 package com.revinder.playgroundblog.util.modelassemblers;
 
+import com.revinder.playgroundblog.controller.PostController;
 import com.revinder.playgroundblog.controller.UserController;
 import com.revinder.playgroundblog.model.Post;
 import org.springframework.hateoas.EntityModel;
@@ -15,7 +16,8 @@ public class PostModelAssembler implements RepresentationModelAssembler<Post, En
     @Override
     public EntityModel<Post> toModel(Post entity) {
         return EntityModel.of(entity,
-                linkTo(methodOn(UserController.class).findById(entity.getId())).withSelfRel(),
-                linkTo(methodOn(UserController.class).findAll()).withRel("posts"));
+                linkTo(methodOn(UserController.class).findById(entity.getUser().getId())).withSelfRel(),
+                linkTo(methodOn(PostController.class).findById(entity.getId())).withSelfRel(),
+                linkTo(methodOn(PostController.class).findAll()).withRel("posts"));
     }
 }
