@@ -17,7 +17,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String login;
+    private String username;
 
     @Column(nullable = false)
     private String password;
@@ -31,7 +31,7 @@ public class User {
 
     public void updateFrom(User user)
     {
-        this.login    = user.login       != null ? user.login    : this.login;
+        this.username = user.username    != null ? user.username : this.username;
         this.password = user.password    != null ? user.password : this.password;
         this.email    = user.email       != null ? user.email    : this.email;
     }

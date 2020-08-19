@@ -14,6 +14,8 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, En
 
     @Override
     public EntityModel<User> toModel(User entity) {
+        /* TODO: Make dto of user to get rid of password field. */
+        entity.setPassword(null);
         return EntityModel.of(entity,
                 linkTo(methodOn(UserController.class).findById(entity.getId())).withSelfRel(),
                 linkTo(methodOn(UserController.class).findAll()).withRel("users"));
