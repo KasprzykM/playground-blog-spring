@@ -3,80 +3,71 @@ package com.revinder.playgroundblog.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.annotation.Resource;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final LoginSuccessHandler loginSuccessHandler;
 
-    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    @Resource(name = "userService")
+    private UserDetailsService userDetailsService;
 
+    private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Autowired
-    public SecurityConfiguration(LoginSuccessHandler loginSuccessHandler, RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
-        this.loginSuccessHandler = loginSuccessHandler;
-        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
+    public SecurityConfiguration(JwtAuthenticationEntryPoint unauthorizedHandler) {
+        this.unauthorizedHandler = unauthorizedHandler;
+    }
+
+
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Autowired
+    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    public JwtAuthenticationFilter authenticationTokenFilterBean()
+    {
+        return new JwtAuthenticationFilter();
     }
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/api/**")
-                    .authenticated()
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/api/token/*", "/api/users/register").permitAll()
+                .anyRequest().authenticated()
                 .and()
-                    .httpBasic()
-                .and()
-                    .exceptionHandling()
-                    .authenticationEntryPoint(restAuthenticationEntryPoint)
-                .and()
-                    .formLogin()
-                    .loginPage("/api/login")
-                    .successHandler(loginSuccessHandler)
-                    .failureHandler(new SimpleUrlAuthenticationFailureHandler());
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // POST + PUT Wont work with csrf enabled from postman alone.
-        http.csrf().disable();
-//        http.csrf().ignoringAntMatchers("/api/login")
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+        http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
 
 
     @Bean
-    public AuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder());
-
-        return provider;
-    }
-
-
-    @Bean
-    public UserDetailsService userDetailsService()
-    {
-        String pwd = "pwd";
-        String username = "user";
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        String encodedPwd = passwordEncoder().encode(pwd);
-
-        manager.createUser(User.withUsername(username).password(encodedPwd).roles("USER").build());
-        return manager;
-    }
-
-
-    @Bean
-    public PasswordEncoder passwordEncoder()
+    public BCryptPasswordEncoder passwordEncoder()
     {
         return new BCryptPasswordEncoder();
     }
