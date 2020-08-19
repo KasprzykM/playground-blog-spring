@@ -53,12 +53,12 @@ public class PostController {
                 .body(postResource);
     }
 
-    @PutMapping("/{userLogin}/{postId}")
+    @PutMapping("/{username}/{postId}")
     public ResponseEntity<EntityModel<Post>> updateByUserLogin(@RequestBody Post post,
-                                                               @PathVariable String userLogin,
+                                                               @PathVariable String username,
                                                                @PathVariable Long postId)
     {
-        Post updatedPost = postService.updatePost(post, postId, userLogin);
+        Post updatedPost = postService.updatePost(post, postId, username);
         EntityModel<Post> postResource = postModelAssembler.toModel(updatedPost);
         return ResponseEntity
                 .created(postResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
@@ -82,7 +82,7 @@ public class PostController {
     @GetMapping("/byUser/{username}")
     public ResponseEntity<CollectionModel<EntityModel<Post>>> findByLogin(@PathVariable String username)
     {
-        List<EntityModel<Post>> posts = postService.findByUserLogin(username)
+        List<EntityModel<Post>> posts = postService.findByUserName(username)
                 .stream().map(postModelAssembler::toModel).collect(Collectors.toList());
 
         return ResponseEntity.ok(

@@ -37,24 +37,24 @@ public class PostService {
                 .orElseThrow(() -> new PostNotFoundException(id));
     }
 
-    public List<Post> findByUserLogin(String login)
+    public List<Post> findByUserName(String username)
     {
-        return postRepository.findAllByUser_Login(login)
-                .orElseThrow(() -> new PostNotFoundException(login));
+        return postRepository.findAllByUser_Username(username)
+                .orElseThrow(() -> new PostNotFoundException(username));
     }
 
-    public Post save(Post post, String userLogin)
+    public Post save(Post post, String username)
     {
-        User user = userRepository.findByLogin(userLogin)
-                .orElseThrow(() -> new UserNotFoundException(userLogin));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
         post.setUser(user);
         return postRepository.save(post);
     }
 
-    public Post updatePost(Post newPost, Long postIdToUpdate, String userLogin)
+    public Post updatePost(Post newPost, Long postIdToUpdate, String username)
     {
-        User user = userRepository.findByLogin(userLogin)
-                .orElseThrow(() -> new UserNotFoundException(userLogin));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
         Post postToUpdate = postRepository.findById(postIdToUpdate)
                 .orElseThrow(() -> new PostNotFoundException(postIdToUpdate));
 

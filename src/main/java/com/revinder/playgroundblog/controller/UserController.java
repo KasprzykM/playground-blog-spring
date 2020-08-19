@@ -8,6 +8,8 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +34,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CollectionModel<EntityModel<User>>> findAll() {
 
         List<EntityModel<User>> users = userService.findAll()
@@ -42,9 +45,8 @@ public class UserController {
                         linkTo(methodOn(UserController.class).findAll()).withSelfRel()));
     }
 
-    @PostMapping
-    public ResponseEntity<EntityModel<User>> create(@RequestBody User user) {
-        /* TODO: Remake as registration. */
+    @PostMapping("/register")
+    public ResponseEntity<EntityModel<User>> register(@RequestBody User user) {
         User newUser = userService.save(user);
         EntityModel<User> userResource = userModelAssembler.toModel(newUser);
         return ResponseEntity
@@ -62,15 +64,15 @@ public class UserController {
                 .body(userResource);
     }
 
-
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public EntityModel<User> findById(@PathVariable Long id) {
         return userModelAssembler.toModel(userService.findById(id));
     }
 
-    @GetMapping("/name/{userLogin}")
-    public EntityModel<User> findByLogin(@PathVariable String userLogin) {
-        return userModelAssembler.toModel(userService.findByLogin(userLogin));
+    @GetMapping("/name/{username}")
+    public EntityModel<User> findByUsername(@PathVariable String username) {
+        return userModelAssembler.toModel(userService.findByUsername(username));
     }
 
 
