@@ -1,6 +1,7 @@
 ### TODO:
 * [ ] INPROGRESS proper registration and routes secured with roles 
 * [ ] INPROGRESS userDto in responses.
+* [ ] Ability to update password based on user login..
 * [ ] When incorrect token, fix exceptions.
 * [x] db passwords_v2 - don't store as plain text
 * [ ] Add comments to post
