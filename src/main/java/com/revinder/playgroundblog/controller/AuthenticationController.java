@@ -17,11 +17,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/token")
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+
+    private final TokenProvider jwtTokenUtil;
 
     @Autowired
-    private TokenProvider jwtTokenUtil;
+    public AuthenticationController(AuthenticationManager authenticationManager, TokenProvider jwtTokenUtil) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     @PostMapping("/generate")
     public ResponseEntity<?> register(@RequestBody LoginUser user){

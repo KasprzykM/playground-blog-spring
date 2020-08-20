@@ -8,6 +8,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class PostController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CollectionModel<EntityModel<Post>>> findAll()
     {
         List<EntityModel<Post>> posts = postService.findAll().stream()
@@ -43,6 +45,7 @@ public class PostController {
     }
 
     @PostMapping("/{userLogin}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<Post>> create(@RequestBody Post post,
                                                     @PathVariable String userLogin)
     {
@@ -54,6 +57,7 @@ public class PostController {
     }
 
     @PutMapping("/{username}/{postId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<Post>> updateByUserLogin(@RequestBody Post post,
                                                                @PathVariable String username,
                                                                @PathVariable Long postId)
@@ -66,6 +70,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable Long id)
     {
         postService.deleteById(id);
@@ -74,12 +79,14 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public EntityModel<Post> findById(@PathVariable Long id)
     {
         return postModelAssembler.toModel(postService.findById(id));
     }
 
     @GetMapping("/byUser/{username}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<Post>>> findByLogin(@PathVariable String username)
     {
         List<EntityModel<Post>> posts = postService.findByUserName(username)

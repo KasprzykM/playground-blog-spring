@@ -55,6 +55,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<User>> updateById(@RequestBody User user,
                                                         @PathVariable Long id) {
         User updatedUser = userService.update(user, id);
@@ -71,12 +72,14 @@ public class UserController {
     }
 
     @GetMapping("/name/{username}")
+    @PreAuthorize("hasRole('USER')")
     public EntityModel<User> findByUsername(@PathVariable String username) {
         return userModelAssembler.toModel(userService.findByUsername(username));
     }
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
