@@ -1,6 +1,7 @@
 package com.revinder.playgroundblog.controller;
 
 import com.revinder.playgroundblog.model.User;
+import com.revinder.playgroundblog.model.UserDTO;
 import com.revinder.playgroundblog.service.UserService;
 import com.revinder.playgroundblog.util.UserMismatchException;
 import com.revinder.playgroundblog.util.modelassemblers.UserModelAssembler;
@@ -37,9 +38,9 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CollectionModel<EntityModel<User>>> findAll() {
+    public ResponseEntity<CollectionModel<EntityModel<UserDTO>>> findAll() {
 
-        List<EntityModel<User>> users = userService.findAll()
+        List<EntityModel<UserDTO>> users = userService.findAll()
                 .stream().map(userModelAssembler::toModel).collect(Collectors.toList());
 
         return ResponseEntity.ok(
@@ -48,27 +49,21 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<EntityModel<User>> register(@RequestBody User user) {
+    public ResponseEntity<EntityModel<UserDTO>> register(@RequestBody User user) {
         User newUser = userService.save(user);
-        EntityModel<User> userResource = userModelAssembler.toModel(newUser);
-        return ResponseEntity
-                .created(userResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(userResource);
+        return toResponse(newUser);
     }
 
     @PutMapping("/updateUser")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<EntityModel<User>> changePassword(@RequestBody User newUserDetails) {
+    public ResponseEntity<EntityModel<UserDTO>> changePassword(@RequestBody User newUserDetails) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
             String loggedInUser = ((UserDetails) principal).getUsername();
             if (loggedInUser.equals(newUserDetails.getUsername())) {
                 User userToUpdate = userService.findByUsername(newUserDetails.getUsername());
                 User updatedUser = userService.update(newUserDetails, userToUpdate.getId());
-                EntityModel<User> userResource = userModelAssembler.toModel(updatedUser);
-                return ResponseEntity
-                        .created(userResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                        .body(userResource);
+                return toResponse(updatedUser);
             }
         }
         throw new UserMismatchException("Incorrect login.");
@@ -76,24 +71,21 @@ public class UserController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EntityModel<User>> updateById(@RequestBody User user,
+    public ResponseEntity<EntityModel<UserDTO>> updateById(@RequestBody User user,
                                                         @PathVariable Long id) {
         User updatedUser = userService.update(user, id);
-        EntityModel<User> userResource = userModelAssembler.toModel(updatedUser);
-        return ResponseEntity
-                .created(userResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(userResource);
+        return toResponse(updatedUser);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public EntityModel<User> findById(@PathVariable Long id) {
+    public EntityModel<UserDTO> findById(@PathVariable Long id) {
         return userModelAssembler.toModel(userService.findById(id));
     }
 
     @GetMapping("/name/{username}")
     @PreAuthorize("hasRole('USER')")
-    public EntityModel<User> findByUsername(@PathVariable String username) {
+    public EntityModel<UserDTO> findByUsername(@PathVariable String username) {
         return userModelAssembler.toModel(userService.findByUsername(username));
     }
 
@@ -103,5 +95,13 @@ public class UserController {
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private ResponseEntity<EntityModel<UserDTO>> toResponse(User entity)
+    {
+        EntityModel<UserDTO> userResource = userModelAssembler.toModel(entity);
+        return ResponseEntity
+                .created(userResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(userResource);
     }
 }
