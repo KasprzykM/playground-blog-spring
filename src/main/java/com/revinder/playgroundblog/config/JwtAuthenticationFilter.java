@@ -50,6 +50,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 logger.warn("The token has expired or is not valid anymore", e);
             } catch (SignatureException e) {
                 logger.error("Authentication failed. Username or password not valid.");
+            } catch(ArrayIndexOutOfBoundsException e){
+                logger.error("Error parsing index out of bounds.");
             }
         } else {
             logger.warn("Couldn't find bearer string, will ignore the header.");
