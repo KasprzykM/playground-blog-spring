@@ -3,6 +3,7 @@ package com.revinder.playgroundblog.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.validator.routines.EmailValidator;
 
 import javax.persistence.*;
 
@@ -33,7 +34,12 @@ public class User {
     {
         this.username = user.username    != null ? user.username : this.username;
         this.password = user.password    != null ? user.password : this.password;
-        this.email    = user.email       != null ? user.email    : this.email;
+        this.email    = user.isEmailValid()      ? user.email    : this.email;
+    }
+
+    public boolean isEmailValid()
+    {
+        return EmailValidator.getInstance().isValid(this.email);
     }
 
 
