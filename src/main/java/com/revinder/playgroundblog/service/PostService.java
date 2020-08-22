@@ -4,9 +4,9 @@ import com.revinder.playgroundblog.model.Post;
 import com.revinder.playgroundblog.model.User;
 import com.revinder.playgroundblog.repository.PostRepository;
 import com.revinder.playgroundblog.repository.UserRepository;
-import com.revinder.playgroundblog.util.PostNotFoundException;
-import com.revinder.playgroundblog.util.UserMismatchException;
-import com.revinder.playgroundblog.util.UserNotFoundException;
+import com.revinder.playgroundblog.util.exceptions.PostNotFoundException;
+import com.revinder.playgroundblog.util.exceptions.UserMismatchException;
+import com.revinder.playgroundblog.util.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +60,7 @@ public class PostService {
 
         Long actualAuthorId = postToUpdate.getUser().getId();
         if(!Objects.equals(actualAuthorId, user.getId()))
-            throw new UserMismatchException();
+            throw new UserMismatchException("Only author can update his own post.");
 
         postToUpdate.updateFrom(newPost);
         return postRepository.save(postToUpdate);

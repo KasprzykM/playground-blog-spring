@@ -2,9 +2,9 @@ package com.revinder.playgroundblog.service;
 
 import com.revinder.playgroundblog.model.User;
 import com.revinder.playgroundblog.repository.UserRepository;
-import com.revinder.playgroundblog.util.IncorrectBodyException;
-import com.revinder.playgroundblog.util.UserDuplicateEntryException;
-import com.revinder.playgroundblog.util.UserNotFoundException;
+import com.revinder.playgroundblog.util.exceptions.IncorrectBodyException;
+import com.revinder.playgroundblog.util.exceptions.UserDuplicateEntryException;
+import com.revinder.playgroundblog.util.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -52,13 +52,13 @@ public class UserService implements UserDetailsService {
     public User save(User user) {
         user.setRole(User.Role.USER);
         User savedUser;
-        if(user.getEmail() == null || user.getUsername() == null || user.getPassword() == null)
-            throw new IncorrectBodyException(user.toString());
+        if(user.getEmail() == null || user.getUsername() == null || user.getPassword() == null || user.isEmailValid())
+            throw new IncorrectBodyException("insufficient user definition.");
         try {
             user.setPassword(bcryptEncoder.encode(user.getPassword()));
             savedUser = userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            throw new UserDuplicateEntryException(e.getLocalizedMessage());
+            throw new UserDuplicateEntryException("email: " + user.getEmail() + " or login: " + user.getUsername());
         }
         return savedUser;
     }

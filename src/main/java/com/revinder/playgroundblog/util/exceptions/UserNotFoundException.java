@@ -1,9 +1,5 @@
-package com.revinder.playgroundblog.util;
+package com.revinder.playgroundblog.util.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Unable to find user.")
 public class UserNotFoundException extends ResourceNotFoundException{
 
     public UserNotFoundException(Long id) {

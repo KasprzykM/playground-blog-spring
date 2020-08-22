@@ -1,4 +1,4 @@
-package com.revinder.playgroundblog.util;
+package com.revinder.playgroundblog.util.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException{
 

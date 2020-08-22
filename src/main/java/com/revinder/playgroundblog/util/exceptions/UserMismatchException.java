@@ -1,9 +1,6 @@
-package com.revinder.playgroundblog.util;
+package com.revinder.playgroundblog.util.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(code = HttpStatus.CONFLICT, reason = "Usernames don't match.")
 public class UserMismatchException extends RuntimeException {
 
     public UserMismatchException() {
