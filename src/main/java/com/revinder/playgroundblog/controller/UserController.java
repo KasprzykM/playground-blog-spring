@@ -3,7 +3,7 @@ package com.revinder.playgroundblog.controller;
 import com.revinder.playgroundblog.model.User;
 import com.revinder.playgroundblog.model.UserDTO;
 import com.revinder.playgroundblog.service.UserService;
-import com.revinder.playgroundblog.util.UserMismatchException;
+import com.revinder.playgroundblog.util.exceptions.UserMismatchException;
 import com.revinder.playgroundblog.util.modelassemblers.UserModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -72,7 +72,7 @@ public class UserController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<UserDTO>> updateById(@RequestBody User user,
-                                                        @PathVariable Long id) {
+                                                           @PathVariable Long id) {
         User updatedUser = userService.update(user, id);
         return toResponse(updatedUser);
     }
