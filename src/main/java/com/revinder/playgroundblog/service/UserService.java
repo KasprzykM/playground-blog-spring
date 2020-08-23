@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User save(User user) {
-        user.setRole(User.Role.USER);
+        user.setRoles(Set.of(User.Role.USER));
         User savedUser;
         if(user.getEmail() == null || user.getUsername() == null || user.getPassword() == null || user.isEmailValid())
             throw new IncorrectBodyException("insufficient user definition.");
@@ -81,9 +81,10 @@ public class UserService implements UserDetailsService {
 
     private Set<? extends GrantedAuthority> getAuthority(User user)
     {
-        /* TODO: Change to have multiple roles available later on. */
         HashSet<SimpleGrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        user.getRoles().forEach(role -> {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        });
         return authorities;
     }
 

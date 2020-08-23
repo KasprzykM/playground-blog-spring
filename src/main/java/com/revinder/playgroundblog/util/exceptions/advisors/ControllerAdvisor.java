@@ -1,9 +1,6 @@
 package com.revinder.playgroundblog.util.exceptions.advisors;
 
-import com.revinder.playgroundblog.util.exceptions.IncorrectBodyException;
-import com.revinder.playgroundblog.util.exceptions.ResourceNotFoundException;
-import com.revinder.playgroundblog.util.exceptions.UserDuplicateEntryException;
-import com.revinder.playgroundblog.util.exceptions.UserMismatchException;
+import com.revinder.playgroundblog.util.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -47,6 +44,8 @@ public class ControllerAdvisor {
         return responseBuilder(e, USER_MISMATCH, request, HttpStatus.CONFLICT);
     }
 
+
+//    public ResponseEntity<?> handleBadRequest(Exception e)
 
 
     private ResponseEntity<Object> responseBuilder(Exception e,

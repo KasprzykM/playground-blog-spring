@@ -54,7 +54,7 @@ public class UserController {
         return toResponse(newUser);
     }
 
-    @PutMapping("/updateUser")
+    @PutMapping("/changePassword")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<EntityModel<UserDTO>> changePassword(@RequestBody User newUserDetails) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

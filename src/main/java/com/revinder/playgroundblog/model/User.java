@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
@@ -28,9 +29,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @Column(length = 5)
-    private Role role;
+    private Set<Role> roles;
 
     public void updateFrom(User user)
     {
