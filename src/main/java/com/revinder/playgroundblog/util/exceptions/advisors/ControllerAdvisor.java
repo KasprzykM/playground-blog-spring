@@ -45,9 +45,6 @@ public class ControllerAdvisor {
     }
 
 
-//    public ResponseEntity<?> handleBadRequest(Exception e)
-
-
     private ResponseEntity<Object> responseBuilder(Exception e,
                                             final String errorName,
                                             HttpServletRequest request,
