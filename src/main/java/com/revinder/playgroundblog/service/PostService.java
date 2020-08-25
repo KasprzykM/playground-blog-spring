@@ -39,8 +39,9 @@ public class PostService {
 
     public List<Post> findByUserName(String username)
     {
-        return postRepository.findAllByUser_Username(username)
-                .orElseThrow(() -> new PostNotFoundException(username));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+        return postRepository.findAllByUser(user);
     }
 
     public Post save(Post post, String username)
