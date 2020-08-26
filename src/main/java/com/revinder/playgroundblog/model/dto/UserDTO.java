@@ -1,5 +1,6 @@
-package com.revinder.playgroundblog.model;
+package com.revinder.playgroundblog.model.dto;
 
+import com.revinder.playgroundblog.model.User;
 import lombok.Data;
 
 @Data

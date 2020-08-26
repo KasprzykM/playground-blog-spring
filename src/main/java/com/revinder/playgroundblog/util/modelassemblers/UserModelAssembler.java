@@ -2,7 +2,7 @@ package com.revinder.playgroundblog.util.modelassemblers;
 
 import com.revinder.playgroundblog.controller.UserController;
 import com.revinder.playgroundblog.model.User;
-import com.revinder.playgroundblog.model.UserDTO;
+import com.revinder.playgroundblog.model.dto.UserDTO;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -15,13 +15,8 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, En
 
     @Override
     public EntityModel<UserDTO> toModel(User entity) {
-        return EntityModel.of(toUserDTO(entity),
+        return EntityModel.of(new UserDTO(entity),
                 linkTo(methodOn(UserController.class).findById(entity.getId())).withSelfRel(),
                 linkTo(methodOn(UserController.class).findAll()).withRel("users"));
-    }
-
-    public UserDTO toUserDTO(User userEntity)
-    {
-        return new UserDTO(userEntity);
     }
 }

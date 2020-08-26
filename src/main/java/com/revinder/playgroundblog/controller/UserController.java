@@ -1,7 +1,7 @@
 package com.revinder.playgroundblog.controller;
 
 import com.revinder.playgroundblog.model.User;
-import com.revinder.playgroundblog.model.UserDTO;
+import com.revinder.playgroundblog.model.dto.UserDTO;
 import com.revinder.playgroundblog.service.UserService;
 import com.revinder.playgroundblog.util.exceptions.UserMismatchException;
 import com.revinder.playgroundblog.util.modelassemblers.UserModelAssembler;
