@@ -32,4 +32,12 @@ public class Comment {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Post post;
+
+
+    public void updateFrom(Comment comment)
+    {
+        this.post = comment.post != null ? comment.post : this.post;
+        this.user = comment.user != null ? comment.user : this.user;
+        this.text = comment.text != null ? comment.text : this.text;
+    }
 }

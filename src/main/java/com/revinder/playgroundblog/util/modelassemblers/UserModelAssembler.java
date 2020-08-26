@@ -20,7 +20,7 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, En
                 linkTo(methodOn(UserController.class).findAll()).withRel("users"));
     }
 
-    private UserDTO toUserDTO(User userEntity)
+    public UserDTO toUserDTO(User userEntity)
     {
         return new UserDTO(userEntity);
     }

@@ -33,7 +33,7 @@ public class PostController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<Post>>> findAll()
     {
         List<EntityModel<Post>> posts = postService.findAll().stream()

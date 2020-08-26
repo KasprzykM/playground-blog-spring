@@ -8,11 +8,13 @@ import com.revinder.playgroundblog.repository.PostRepository;
 import com.revinder.playgroundblog.repository.UserRepository;
 import com.revinder.playgroundblog.util.exceptions.CommentNotFoundException;
 import com.revinder.playgroundblog.util.exceptions.PostNotFoundException;
+import com.revinder.playgroundblog.util.exceptions.UserMismatchException;
 import com.revinder.playgroundblog.util.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CommentService {
@@ -76,8 +78,13 @@ public class CommentService {
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        //TODO
-        return  null;
+        Long actualAuthorId = oldComment.getUser().getId();
+        if(!Objects.equals(actualAuthorId, currentUser.getId()))
+            throw new UserMismatchException("Only author can update his own comment.");
+
+
+        oldComment.updateFrom(newComment);
+        return  commentRepository.save(oldComment);
 
     }
 }
