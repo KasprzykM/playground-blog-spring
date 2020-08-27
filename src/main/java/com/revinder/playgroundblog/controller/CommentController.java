@@ -42,12 +42,7 @@ public class CommentController {
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAll() {
-        List<EntityModel<CommentDTO>> comments = commentService.findAll().stream()
-                .map(commentModelAssembler::toModel).collect(Collectors.toList());
-
-        return ResponseEntity.ok(
-                CollectionModel.of(comments,
-                        linkTo(methodOn(CommentController.class).findAll()).withSelfRel()));
+        return toResponseEntity(commentService.findAll());
     }
 
     @DeleteMapping("/{id}")
@@ -61,49 +56,48 @@ public class CommentController {
     @PostMapping("/{postId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<EntityModel<CommentDTO>> create(@RequestBody Comment comment,
-                                                          @PathVariable Long postId,
-                                                          @RequestParam String username) {
+                                                          @PathVariable Long postId) {
         String loggedInUser = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (loggedInUser.equals(username)) {
-            Comment newComment = commentService.save(comment, username, postId);
-            EntityModel<CommentDTO> commentResource = commentModelAssembler.toModel(newComment);
-            return ResponseEntity
-                    .created(commentResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                    .body(commentResource);
-        }
-        throw new UserMismatchException("Incorrect login.");
+        Comment newComment = commentService.save(comment, loggedInUser, postId);
+        return toResponseEntity(newComment);
     }
 
     @GetMapping("/{postId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAllByPostId(@PathVariable Long postId) {
-        List<EntityModel<CommentDTO>> comments = commentService.findByPost(postId).stream()
-                .map(commentModelAssembler::toModel).collect(Collectors.toList());
-
-        return ResponseEntity.ok(
-                CollectionModel.of(comments,
-                        linkTo(methodOn(CommentController.class).findAll()).withSelfRel()));
+        return toResponseEntity(commentService.findByPost(postId));
     }
 
     @GetMapping("/byUser")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAllByUser(@RequestParam String username) {
-        List<EntityModel<CommentDTO>> comments = commentService.findByUserName(username).stream()
-                .map(commentModelAssembler::toModel).collect(Collectors.toList());
-
-        return ResponseEntity.ok(
-                CollectionModel.of(comments,
-                        linkTo(methodOn(CommentController.class).findAll()).withSelfRel()));
+        return toResponseEntity(commentService.findByUserName(username));
     }
 
 
     @PutMapping("/{commentId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<CommentDTO>> updateComment(@RequestBody Comment newComment,
-                                                                 @RequestParam String username,
                                                                  @PathVariable Long commentId) {
-        Comment updatedComment = commentService.update(newComment, commentId, username);
-        EntityModel<CommentDTO> commentResource = commentModelAssembler.toModel(updatedComment);
+        String loggedInUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        Comment updatedComment = commentService.update(newComment, commentId, loggedInUser);
+        return toResponseEntity(updatedComment);
+    }
+
+    private ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> toResponseEntity(List<Comment> comments)
+    {
+        List<EntityModel<CommentDTO>> commentsDTO = comments.stream()
+                .map(commentModelAssembler::toModel)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                CollectionModel.of(commentsDTO,
+                        linkTo(methodOn(CommentController.class).findAll()).withSelfRel()));
+    }
+
+    private ResponseEntity<EntityModel<CommentDTO>> toResponseEntity(Comment comment)
+    {
+        EntityModel<CommentDTO> commentResource = commentModelAssembler.toModel(comment);
         return ResponseEntity
                 .created(commentResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(commentResource);
