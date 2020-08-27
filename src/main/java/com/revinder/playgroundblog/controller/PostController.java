@@ -1,6 +1,7 @@
 package com.revinder.playgroundblog.controller;
 
 import com.revinder.playgroundblog.model.Post;
+import com.revinder.playgroundblog.model.dto.PostDTO;
 import com.revinder.playgroundblog.service.PostService;
 import com.revinder.playgroundblog.util.modelassemblers.PostModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,9 @@ public class PostController {
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CollectionModel<EntityModel<Post>>> findAll()
+    public ResponseEntity<CollectionModel<EntityModel<PostDTO>>> findAll()
     {
-        List<EntityModel<Post>> posts = postService.findAll().stream()
+        List<EntityModel<PostDTO>> posts = postService.findAll().stream()
                 .map(postModelAssembler::toModel).collect(Collectors.toList());
 
         return ResponseEntity.ok(
@@ -46,11 +47,11 @@ public class PostController {
 
     @PostMapping("/{userLogin}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EntityModel<Post>> create(@RequestBody Post post,
+    public ResponseEntity<EntityModel<PostDTO>> create(@RequestBody Post post,
                                                     @PathVariable String userLogin)
     {
         Post newPost = postService.save(post, userLogin);
-        EntityModel<Post> postResource = postModelAssembler.toModel(newPost);
+        EntityModel<PostDTO> postResource = postModelAssembler.toModel(newPost);
         return ResponseEntity
                 .created(postResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(postResource);
@@ -58,12 +59,12 @@ public class PostController {
 
     @PutMapping("/{username}/{postId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EntityModel<Post>> updateByUserLogin(@RequestBody Post post,
+    public ResponseEntity<EntityModel<PostDTO>> updateByUserLogin(@RequestBody Post post,
                                                                @PathVariable String username,
                                                                @PathVariable Long postId)
     {
         Post updatedPost = postService.updatePost(post, postId, username);
-        EntityModel<Post> postResource = postModelAssembler.toModel(updatedPost);
+        EntityModel<PostDTO> postResource = postModelAssembler.toModel(updatedPost);
         return ResponseEntity
                 .created(postResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(postResource);
@@ -80,16 +81,16 @@ public class PostController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public EntityModel<Post> findById(@PathVariable Long id)
+    public EntityModel<PostDTO> findById(@PathVariable Long id)
     {
         return postModelAssembler.toModel(postService.findById(id));
     }
 
     @GetMapping("/byUser/{username}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CollectionModel<EntityModel<Post>>> findByLogin(@PathVariable String username)
+    public ResponseEntity<CollectionModel<EntityModel<PostDTO>>> findByLogin(@PathVariable String username)
     {
-        List<EntityModel<Post>> posts = postService.findByUserName(username)
+        List<EntityModel<PostDTO>> posts = postService.findByUserName(username)
                 .stream().map(postModelAssembler::toModel).collect(Collectors.toList());
 
         return ResponseEntity.ok(

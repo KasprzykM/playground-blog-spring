@@ -1,8 +1,6 @@
 package com.revinder.playgroundblog.controller;
 
-
-import com.revinder.playgroundblog.model.Comment;
-import com.revinder.playgroundblog.model.Post;
+import com.revinder.playgroundblog.model.dto.CommentDTO;
 import com.revinder.playgroundblog.service.CommentService;
 import com.revinder.playgroundblog.util.modelassemblers.CommentModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +34,16 @@ public class CommentController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public EntityModel<Comment> findById(@PathVariable Long id)
+    public EntityModel<CommentDTO> findById(@PathVariable Long id)
     {
         return commentModelAssembler.toModel(commentService.findById(id));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CollectionModel<EntityModel<Comment>>> findAll()
+    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAll()
     {
-        List<EntityModel<Comment>> comments = commentService.findAll().stream()
+        List<EntityModel<CommentDTO>> comments = commentService.findAll().stream()
                 .map(commentModelAssembler::toModel).collect(Collectors.toList());
 
         return ResponseEntity.ok(
