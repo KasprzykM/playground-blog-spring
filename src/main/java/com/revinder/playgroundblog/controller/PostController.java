@@ -60,10 +60,10 @@ public class PostController {
 
     @PutMapping("/{postId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EntityModel<PostDTO>> updateByUserLogin(@RequestBody Post post,
-                                                               @RequestParam String username,
+    public ResponseEntity<EntityModel<PostDTO>> updateByPostId(@RequestBody Post post,
                                                                @PathVariable Long postId)
     {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Post updatedPost = postService.updatePost(post, postId, username);
         EntityModel<PostDTO> postResource = postModelAssembler.toModel(updatedPost);
         return ResponseEntity
