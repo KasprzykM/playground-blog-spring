@@ -57,10 +57,10 @@ public class PostController {
                 .body(postResource);
     }
 
-    @PutMapping("/{username}/{postId}")
+    @PutMapping("/{postId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<PostDTO>> updateByUserLogin(@RequestBody Post post,
-                                                               @PathVariable String username,
+                                                               @RequestParam String username,
                                                                @PathVariable Long postId)
     {
         Post updatedPost = postService.updatePost(post, postId, username);
