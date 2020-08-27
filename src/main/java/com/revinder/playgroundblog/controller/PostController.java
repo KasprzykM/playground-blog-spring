@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,7 +39,7 @@ public class PostController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<PostDTO>>> findAll()
     {
-        return toResponseEntity(postService.findAll());
+        return toResponseEntity(postService.findAll(), linkTo(methodOn(PostController.class).findAll()).withSelfRel());
     }
 
     @PostMapping
@@ -80,18 +81,18 @@ public class PostController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<PostDTO>>> findByLogin(@PathVariable String username)
     {
-        return toResponseEntity(postService.findByUserName(username));
+        return toResponseEntity(postService.findByUserName(username), linkTo(methodOn(PostController.class).findByLogin(username)).withSelfRel());
     }
 
-    private ResponseEntity<CollectionModel<EntityModel<PostDTO>>> toResponseEntity(List<Post> posts)
+    private ResponseEntity<CollectionModel<EntityModel<PostDTO>>> toResponseEntity(List<Post> posts,
+                                                                                   Link methodLink)
     {
         List<EntityModel<PostDTO>> postsDTO = posts.stream()
                 .map(postModelAssembler::toModel)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(
-                CollectionModel.of(postsDTO,
-                        linkTo(methodOn(PostController.class).findAll()).withSelfRel()));
+                CollectionModel.of(postsDTO, methodLink));
     }
 
     private ResponseEntity<EntityModel<PostDTO>> toResponseEntity(Post post)

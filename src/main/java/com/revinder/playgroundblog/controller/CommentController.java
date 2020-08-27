@@ -3,12 +3,12 @@ package com.revinder.playgroundblog.controller;
 import com.revinder.playgroundblog.model.Comment;
 import com.revinder.playgroundblog.model.dto.CommentDTO;
 import com.revinder.playgroundblog.service.CommentService;
-import com.revinder.playgroundblog.util.exceptions.UserMismatchException;
 import com.revinder.playgroundblog.util.modelassemblers.CommentModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,7 +42,7 @@ public class CommentController {
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAll() {
-        return toResponseEntity(commentService.findAll());
+        return toResponseEntity(commentService.findAll(), linkTo(methodOn(CommentController.class).findAll()).withSelfRel());
     }
 
     @DeleteMapping("/{id}")
@@ -62,16 +62,16 @@ public class CommentController {
         return toResponseEntity(newComment);
     }
 
-    @GetMapping("/{postId}")
+    @GetMapping("/byPost")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAllByPostId(@PathVariable Long postId) {
-        return toResponseEntity(commentService.findByPost(postId));
+    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAllByPostId(@RequestParam Long postId) {
+        return toResponseEntity(commentService.findByPost(postId), linkTo(methodOn(CommentController.class).findAllByPostId(postId)).withSelfRel());
     }
 
     @GetMapping("/byUser")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAllByUser(@RequestParam String username) {
-        return toResponseEntity(commentService.findByUserName(username));
+        return toResponseEntity(commentService.findByUserName(username), linkTo(methodOn(CommentController.class).findAllByUser(username)).withSelfRel());
     }
 
 
@@ -84,15 +84,15 @@ public class CommentController {
         return toResponseEntity(updatedComment);
     }
 
-    private ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> toResponseEntity(List<Comment> comments)
+    private ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> toResponseEntity(List<Comment> comments,
+                                                                                      Link methodLink)
     {
         List<EntityModel<CommentDTO>> commentsDTO = comments.stream()
                 .map(commentModelAssembler::toModel)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(
-                CollectionModel.of(commentsDTO,
-                        linkTo(methodOn(CommentController.class).findAll()).withSelfRel()));
+                CollectionModel.of(commentsDTO, methodLink));
     }
 
     private ResponseEntity<EntityModel<CommentDTO>> toResponseEntity(Comment comment)
