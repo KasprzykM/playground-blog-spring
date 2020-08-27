@@ -12,7 +12,6 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,15 +56,12 @@ public class UserController {
     @PutMapping("/changePassword")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<EntityModel<UserDTO>> changePassword(@RequestBody User newUserDetails) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            String loggedInUser = ((UserDetails) principal).getUsername();
+            String loggedInUser = SecurityContextHolder.getContext().getAuthentication().getName();
             if (loggedInUser.equals(newUserDetails.getUsername())) {
                 User userToUpdate = userService.findByUsername(newUserDetails.getUsername());
                 User updatedUser = userService.update(newUserDetails, userToUpdate.getId());
                 return toResponse(updatedUser);
             }
-        }
         throw new UserMismatchException("Incorrect login.");
     }
 

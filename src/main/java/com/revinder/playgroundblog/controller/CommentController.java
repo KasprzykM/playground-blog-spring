@@ -12,7 +12,6 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,15 +35,13 @@ public class CommentController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public EntityModel<CommentDTO> findById(@PathVariable Long id)
-    {
+    public EntityModel<CommentDTO> findById(@PathVariable Long id) {
         return commentModelAssembler.toModel(commentService.findById(id));
     }
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAll()
-    {
+    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAll() {
         List<EntityModel<CommentDTO>> comments = commentService.findAll().stream()
                 .map(commentModelAssembler::toModel).collect(Collectors.toList());
 
@@ -55,8 +52,7 @@ public class CommentController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id)
-    {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         commentService.deleteById(id);
         return ResponseEntity.noContent()
                 .build();
@@ -66,26 +62,21 @@ public class CommentController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<EntityModel<CommentDTO>> create(@RequestBody Comment comment,
                                                           @PathVariable Long postId,
-                                                          @RequestParam String username)
-    {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            String loggedInUser = ((UserDetails) principal).getUsername();
-            if (loggedInUser.equals(username)) {
-                Comment newComment = commentService.save(comment, username, postId);
-                EntityModel<CommentDTO> commentResource = commentModelAssembler.toModel(newComment);
-                return ResponseEntity
-                        .created(commentResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                        .body(commentResource);
-            }
+                                                          @RequestParam String username) {
+        String loggedInUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (loggedInUser.equals(username)) {
+            Comment newComment = commentService.save(comment, username, postId);
+            EntityModel<CommentDTO> commentResource = commentModelAssembler.toModel(newComment);
+            return ResponseEntity
+                    .created(commentResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(commentResource);
         }
         throw new UserMismatchException("Incorrect login.");
     }
 
     @GetMapping("/{postId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAllByPostId(@PathVariable Long postId)
-    {
+    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAllByPostId(@PathVariable Long postId) {
         List<EntityModel<CommentDTO>> comments = commentService.findByPost(postId).stream()
                 .map(commentModelAssembler::toModel).collect(Collectors.toList());
 
@@ -96,8 +87,7 @@ public class CommentController {
 
     @GetMapping("/byUser")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAllByUser(@RequestParam String username)
-    {
+    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAllByUser(@RequestParam String username) {
         List<EntityModel<CommentDTO>> comments = commentService.findByUserName(username).stream()
                 .map(commentModelAssembler::toModel).collect(Collectors.toList());
 
@@ -110,9 +100,8 @@ public class CommentController {
     @PutMapping("/{commentId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EntityModel<CommentDTO>> updateComment(@RequestBody Comment newComment,
-                                                                  @RequestParam String username,
-                                                                  @PathVariable Long commentId)
-    {
+                                                                 @RequestParam String username,
+                                                                 @PathVariable Long commentId) {
         Comment updatedComment = commentService.update(newComment, commentId, username);
         EntityModel<CommentDTO> commentResource = commentModelAssembler.toModel(updatedComment);
         return ResponseEntity

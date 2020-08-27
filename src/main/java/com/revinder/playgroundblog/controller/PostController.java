@@ -10,6 +10,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,12 +46,12 @@ public class PostController {
                         linkTo(methodOn(PostController.class).findAll()).withSelfRel()));
     }
 
-    @PostMapping("/{userLogin}")
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EntityModel<PostDTO>> create(@RequestBody Post post,
-                                                    @PathVariable String userLogin)
+    public ResponseEntity<EntityModel<PostDTO>> create(@RequestBody Post post)
     {
-        Post newPost = postService.save(post, userLogin);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Post newPost = postService.save(post, username);
         EntityModel<PostDTO> postResource = postModelAssembler.toModel(newPost);
         return ResponseEntity
                 .created(postResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
