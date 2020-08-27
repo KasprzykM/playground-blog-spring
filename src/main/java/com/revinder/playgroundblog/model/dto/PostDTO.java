@@ -2,13 +2,15 @@ package com.revinder.playgroundblog.model.dto;
 
 import com.revinder.playgroundblog.model.Post;
 import lombok.Data;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.util.Date;
 
 @Data
+@Relation(collectionRelation = "posts")
 public class PostDTO {
 
-    private UserDTO user;
+    private UserDTO author;
     private String title;
     private String rawContent;
     private String renderedContent;
@@ -18,7 +20,7 @@ public class PostDTO {
 
     public PostDTO(Post post)
     {
-        this.user            = new UserDTO(post.getUser());
+        this.author          = new UserDTO(post.getUser());
         this.title           = post.getTitle();
         this.rawContent      = post.getRawContent();
         this.renderedContent = post.getRenderedContent();
