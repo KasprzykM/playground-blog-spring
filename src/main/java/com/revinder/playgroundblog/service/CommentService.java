@@ -41,10 +41,15 @@ public class CommentService {
     }
 
 
-    public Comment save(Comment comment, String username) {
+    public Comment save(Comment comment, String username, Long postId) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+
         comment.setUser(user);
+        comment.setPost(post);
         return commentRepository.save(comment);
     }
 
