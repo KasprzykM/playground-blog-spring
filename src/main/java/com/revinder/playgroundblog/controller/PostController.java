@@ -38,12 +38,7 @@ public class PostController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<PostDTO>>> findAll()
     {
-        List<EntityModel<PostDTO>> posts = postService.findAll().stream()
-                .map(postModelAssembler::toModel).collect(Collectors.toList());
-
-        return ResponseEntity.ok(
-                CollectionModel.of(posts,
-                        linkTo(methodOn(PostController.class).findAll()).withSelfRel()));
+        return toResponseEntity(postService.findAll());
     }
 
     @PostMapping
@@ -52,10 +47,7 @@ public class PostController {
     {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Post newPost = postService.save(post, username);
-        EntityModel<PostDTO> postResource = postModelAssembler.toModel(newPost);
-        return ResponseEntity
-                .created(postResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(postResource);
+        return toResponseEntity(newPost);
     }
 
     @PutMapping("/{postId}")
@@ -65,10 +57,7 @@ public class PostController {
     {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Post updatedPost = postService.updatePost(post, postId, username);
-        EntityModel<PostDTO> postResource = postModelAssembler.toModel(updatedPost);
-        return ResponseEntity
-                .created(postResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(postResource);
+        return toResponseEntity(updatedPost);
     }
 
     @DeleteMapping("/{id}")
@@ -91,12 +80,25 @@ public class PostController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CollectionModel<EntityModel<PostDTO>>> findByLogin(@PathVariable String username)
     {
-        List<EntityModel<PostDTO>> posts = postService.findByUserName(username)
-                .stream().map(postModelAssembler::toModel).collect(Collectors.toList());
+        return toResponseEntity(postService.findByUserName(username));
+    }
+
+    private ResponseEntity<CollectionModel<EntityModel<PostDTO>>> toResponseEntity(List<Post> posts)
+    {
+        List<EntityModel<PostDTO>> postsDTO = posts.stream()
+                .map(postModelAssembler::toModel)
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(
-                CollectionModel.of(posts,
+                CollectionModel.of(postsDTO,
                         linkTo(methodOn(PostController.class).findAll()).withSelfRel()));
     }
 
+    private ResponseEntity<EntityModel<PostDTO>> toResponseEntity(Post post)
+    {
+        EntityModel<PostDTO> postResource = postModelAssembler.toModel(post);
+        return ResponseEntity
+                .created(postResource.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(postResource);
+    }
 }
