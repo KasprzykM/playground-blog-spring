@@ -23,27 +23,27 @@ according to your needs.
 * you may want to change Signing key and Token time validity for JWT in ``TokenProvider.java`` as well.
 
 To build project file run:
-````
+````bash
 $ gradlew clean build
 ````
 
 Then create docker image:
-````
+````bash
 $ docker build -t spring-backend .
 ````
 
 And to run it all together:
 
-```
+```bash
 $ docker-compose up
 ```
 
 ## How to use
 
-### User (/api/users/)
-Firstly, you need to register (and be saved to database) to start. If you are running application locally 
+### User /api/users/
+Firstly, you need to register (and be saved to database) to start. If you are running application locally
 you can send your details like that:
-```
+```bash
 curl --request POST 'http://localhost:8080/api/users/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -55,7 +55,7 @@ curl --request POST 'http://localhost:8080/api/users/register' \
 If everything went successful your response will look like this:
 NOTE: You can not register as `ADMIN` meaning you will not be able to perform some of the available requests. This is by design
 and to actually register `ADMIN` account you will need to either alter database or add him in `CommandLineRunner`.
-````
+````json
 {
     "email": "test1a@gmail.com",
     "username": "User11",
@@ -71,7 +71,7 @@ and to actually register `ADMIN` account you will need to either alter database 
 ````
 
 Then you will need to get actually log in as that user and receive your token:
-````
+````bash
 curl --request POST 'http://localhost:8080/api/token/generate' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -81,19 +81,19 @@ curl --request POST 'http://localhost:8080/api/token/generate' \
 ````
 
 And again if successful you will receive response:
-````
+````json
 {
     "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyMSIsInNjb3BlcyI6IlJPTEVfVVNFUiI....."
 }
 ````
 Use that token for later actions. For example, as `ADMIN` you can get list of all users:
-````
+````bash
 curl --location --request GET 'http://localhost:8080/api/users' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1p....'
 ````
 
 Which will look like this:
-```
+```json
 {
     "_embedded": {
         "users": [
@@ -140,10 +140,10 @@ Supported methods:
 * `PUT` with route `/api/users/changePassword/` with `@RequestBody of new User Details` to change password.
 * `POST` with route `/api/users/register` to register (explained above).
 
-### Post (/api/posts/)
+### Post /api/posts/
 
 Posts take form of and only `ADMIN` can create one (Why? Well because its supposed to be one man blog only):
-```
+```bash
 curl --request POST 'http://localhost:8080/api/posts' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJz....' \
 --header 'Content-Type: application/json' \
@@ -156,7 +156,7 @@ curl --request POST 'http://localhost:8080/api/posts' \
 ```
 
 With everything going correct the response will look like this:
-```
+```json
 {
     "author": {
         "email": "admin1@gmail.com",
@@ -193,10 +193,10 @@ Supported methods:
 * `GET` with route `/api/posts/byUser/` with `@PathVariable username` to fetch all posts by user of username.
 
 
-### Comments (/api/comments/)
+### Comments /api/comments/
 
 Comments can be posted by both `USER` and `ADMIN` and take form of:
-````
+````bash
 curl --location --request POST 'http://localhost:8080/api/comments/1' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ...' \
 --header 'Content-Type: application/json' \
@@ -207,7 +207,7 @@ curl --location --request POST 'http://localhost:8080/api/comments/1' \
 Where `@PathVariable 1` refers to post of id 1.
 
 Response will look like:
-```
+```json
 {
     "text": "Nice one. I liked it.",
     "createdAt": "2020-08-28T19:35:15.059+00:00",
@@ -260,4 +260,3 @@ Supported methods:
 
 Well, for starters there are no tests written. Some of the API Methods have overly verbose responses with a lot of hrefs in them, thats probably bad idea as well.
 There is also no way to check if provided email is actually real, it only checks if the address is valid but not if is in use.
- 
