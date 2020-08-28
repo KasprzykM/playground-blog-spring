@@ -45,12 +45,15 @@ public class Post {
     private String renderedSummary;
 
     @Column(nullable = false)
+    @Builder.Default
     private Date createdAt = new Date();
 
     @Column(nullable = false)
+    @Builder.Default
     private Date lastUpdatedAt = new Date();
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean draft = true;
 
 

@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
     public User save(User user) {
         user.setRoles(Set.of(User.Role.USER));
         User savedUser;
-        if(user.getEmail() == null || user.getUsername() == null || user.getPassword() == null || user.isEmailValid())
+        if(user.getEmail() == null || user.getUsername() == null || user.getPassword() == null || !user.isEmailValid())
             throw new IncorrectBodyException("insufficient user definition.");
         try {
             user.setPassword(bcryptEncoder.encode(user.getPassword()));
