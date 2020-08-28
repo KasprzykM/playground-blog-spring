@@ -1,9 +1,8 @@
-# Use root/example as user/password credentials
-version: '3.1'
+version: "3.1"
 
 services:
 
-  playground-blog-db:
+  db:
     image: mysql:latest
     command: --default-authentication-plugin=mysql_native_password
     restart: always
@@ -16,10 +15,10 @@ services:
     networks:
       - spring_net
 
-  playground-blog-spring-backend:
-    image: playground-blog-spring-backend:latest
+  spring-backend:
+    image: spring-backend:latest
     depends_on:
-      - playground-blog-db
+      - "db"
     environment:
       - DATABASE_USER=root
       - DATABASE_PASSWORD=root
