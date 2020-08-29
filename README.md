@@ -23,18 +23,18 @@ according to your needs.
 * you may want to change Signing key and Token time validity for JWT in ``TokenProvider.java`` as well.
 
 To build project file run:
-````bash
+````shell script
 $ gradlew clean build
 ````
 
 Then create docker image:
-````bash
+````shell script
 $ docker build -t spring-backend .
 ````
 
 And to run it all together:
 
-```bash
+```shell script
 $ docker-compose up
 ```
 
@@ -43,7 +43,7 @@ $ docker-compose up
 ### User /api/users/
 Firstly, you need to register (and be saved to database) to start. If you are running application locally
 you can send your details like that:
-```bash
+```shell script
 curl --request POST 'http://localhost:8080/api/users/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -55,7 +55,7 @@ curl --request POST 'http://localhost:8080/api/users/register' \
 If everything went successful your response will look like this:
 NOTE: You can not register as `ADMIN` meaning you will not be able to perform some of the available requests. This is by design
 and to actually register `ADMIN` account you will need to either alter database or add him in `CommandLineRunner`.
-````json
+```json
 {
     "email": "test1a@gmail.com",
     "username": "User11",
@@ -68,29 +68,29 @@ and to actually register `ADMIN` account you will need to either alter database 
         }
     }
 }
-````
+```
 
 Then you will need to get actually log in as that user and receive your token:
-````bash
+```shell script
 curl --request POST 'http://localhost:8080/api/token/generate' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "username": "User1",
     "password": "pwd123"
 }'
-````
+```
 
 And again if successful you will receive response:
-````json
+```json
 {
     "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyMSIsInNjb3BlcyI6IlJPTEVfVVNFUiI....."
 }
-````
+```
 Use that token for later actions. For example, as `ADMIN` you can get list of all users:
-````bash
+```shell script
 curl --location --request GET 'http://localhost:8080/api/users' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1p....'
-````
+```
 
 Which will look like this:
 ```json
@@ -143,7 +143,7 @@ Supported methods:
 ### Post /api/posts/
 
 Posts take form of and only `ADMIN` can create one (Why? Well because its supposed to be one man blog only):
-```bash
+```shell script
 curl --request POST 'http://localhost:8080/api/posts' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJz....' \
 --header 'Content-Type: application/json' \
@@ -196,14 +196,14 @@ Supported methods:
 ### Comments /api/comments/
 
 Comments can be posted by both `USER` and `ADMIN` and take form of:
-````bash
+```shell script
 curl --location --request POST 'http://localhost:8080/api/comments/1' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ...' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "text": "Nice one. I liked it."
 }'
-````
+```
 Where `@PathVariable 1` refers to post of id 1.
 
 Response will look like:
