@@ -23,14 +23,14 @@ according to your needs.
 * you may want to change Signing key and Token time validity for JWT in ``TokenProvider.java`` as well.
 
 To build project file run:
-````shell script
+```bash
 $ gradlew clean build
-````
+```
 
 Then create docker image:
-````shell script
+```shell script
 $ docker build -t spring-backend .
-````
+```
 
 And to run it all together:
 
@@ -43,7 +43,7 @@ $ docker-compose up
 ### User /api/users/
 Firstly, you need to register (and be saved to database) to start. If you are running application locally
 you can send your details like that:
-```shell script
+```bash
 curl --request POST 'http://localhost:8080/api/users/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -55,7 +55,7 @@ curl --request POST 'http://localhost:8080/api/users/register' \
 If everything went successful your response will look like this:
 NOTE: You can not register as `ADMIN` meaning you will not be able to perform some of the available requests. This is by design
 and to actually register `ADMIN` account you will need to either alter database or add him in `CommandLineRunner`.
-```json
+```yaml
 {
     "email": "test1a@gmail.com",
     "username": "User11",
@@ -81,7 +81,7 @@ curl --request POST 'http://localhost:8080/api/token/generate' \
 ```
 
 And again if successful you will receive response:
-```json
+```yaml
 {
     "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyMSIsInNjb3BlcyI6IlJPTEVfVVNFUiI....."
 }
@@ -93,7 +93,7 @@ curl --location --request GET 'http://localhost:8080/api/users' \
 ```
 
 Which will look like this:
-```json
+```yaml
 {
     "_embedded": {
         "users": [
@@ -156,7 +156,7 @@ curl --request POST 'http://localhost:8080/api/posts' \
 ```
 
 With everything going correct the response will look like this:
-```json
+```yaml
 {
     "author": {
         "email": "admin1@gmail.com",
@@ -207,7 +207,7 @@ curl --location --request POST 'http://localhost:8080/api/comments/1' \
 Where `@PathVariable 1` refers to post of id 1.
 
 Response will look like:
-```json
+```yaml
 {
     "text": "Nice one. I liked it.",
     "createdAt": "2020-08-28T19:35:15.059+00:00",
