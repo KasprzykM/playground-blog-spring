@@ -2,7 +2,7 @@
 
 ## About
 RESTful API service for blog-like website written in Spring. This project is done purely to learn Spring aspects while
-at the same time make something semi-useful. Perhaps it will be of use for you as well.
+at the same time make something semi-useful, so not everything in it might make sense. Perhaps it will be of use for you as well.
 
 Features:
 * Data persistence to MySQL database.
